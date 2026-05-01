@@ -1,4 +1,4 @@
-# Driftool Dashboard
+# Driftatlas
 
 Interactive web dashboard for exploring Driftool analysis results across 21 repositories
 over a three-month period (~1,470 daily reports). Companion to the `drift-repo-analysis`
@@ -12,6 +12,53 @@ variants: conflicting lines, conflict instances, and conflicting files.
 This dashboard makes that data navigable: pick a repository, see how its drift evolved,
 inspect any single day's point cloud and conflict matrix, and cross-reference drift against
 GitHub activity (commits, releases, branch counts).
+
+## Getting started
+
+Prerequisites: Node ≥ 20, Python ≥ 3.10.
+
+```bash
+# 1. install JS deps
+npm install
+
+# 2. point the env at your local drift-repo-analysis folder
+cp .env.example .env
+# then edit .env and set DRIFT_REPO_ANALYSIS_PATH=...
+
+# 3. set up the Python preprocessing venv
+python3 -m venv preprocessing/.venv
+source preprocessing/.venv/bin/activate
+pip install -r preprocessing/requirements.txt
+deactivate
+
+# 4. generate the JSON artifacts in public/data/
+python3 preprocessing/build_timeseries.py
+
+# 5. run the dev server
+npm run dev
+```
+
+Rerun step 4 whenever the source analysis changes; `public/data/` is gitignored.
+
+## Project structure
+
+```
+dashboard/
+├── preprocessing/             # Python; reads $DRIFT_REPO_ANALYSIS_PATH
+│   ├── build_timeseries.py    # per-repo CSVs → public/data/*.json
+│   └── requirements.txt
+├── public/
+│   └── data/                  # generated artifacts (gitignored)
+│       ├── index.json
+│       └── repos/<repo>/timeseries.json
+├── src/
+│   ├── components/            # Layout, charts/
+│   ├── routes/                # Portfolio, Repo, (Day in Phase 2)
+│   ├── data/                  # types + fetch wrappers
+│   ├── App.tsx                # router
+│   └── main.tsx
+└── ...
+```
 
 ## Data sources
 
@@ -51,6 +98,9 @@ Three levels, navigable top-down:
 3. **Day view** — interactive 3D MDS point cloud + reordered conflict heatmap +
    branch ranking table, all linked (hovering one highlights the others).
 
+Phase 1 ships the Portfolio list and the Repo view's drift time series. Day view, calendar
+heatmap, sparkline grid, 3D point cloud, and conflict-matrix heatmap come in Phase 2.
+
 ## Planned visualizations
 
 **Distance-based**
@@ -61,7 +111,7 @@ Three levels, navigable top-down:
 - Force-directed graph from the raw matrix as an alternative to MDS
 
 **Time series**
-- Triple-drift line chart (log scale toggle, normalization toggle)
+- Triple-drift line chart (log scale toggle, normalization toggle) — *Phase 1 ✓*
 - Drift × activity overlay (commits as bars, releases as event lines)
 - Calendar heatmap (GitHub-contributions style) across all 21 repos
 - Sparkline grid as the home-page overview
@@ -81,18 +131,19 @@ Three levels, navigable top-down:
 
 ## Tech stack
 
-- **React + Vite** — component model, fast dev loop, static build output
+- **React + Vite + TypeScript** — component model, fast dev loop, static build output
 - **D3** — all 2D charts (heatmap, time series, calendar, scatter, force graph)
 - **Three.js via react-three-fiber** — the 3D MDS point cloud
 - **Static site** — no backend; all data served as pre-processed JSON
 
 ## Build pipeline
 
-A one-shot preprocessing step (Node or Python) reads the raw analysis outputs once and
-writes browser-friendly artifacts:
+A one-shot preprocessing step (Python) reads the raw analysis outputs once and writes
+browser-friendly artifacts:
 
-- one slim per-repo time-series JSON (mostly the existing CSV);
-- one per-(repo, day) JSON with point cloud + matrix-as-edge-list (sparse) + branch list.
+- one slim per-repo time-series JSON (already shipped in Phase 1);
+- one per-(repo, day) JSON with point cloud + matrix-as-edge-list (sparse) + branch list
+  (Phase 2).
 
 Storing the matrices as edge lists rather than dense arrays cuts payload roughly 10×
 because the matrices are mostly zero.
@@ -108,8 +159,11 @@ because the matrices are mostly zero.
   weeks. Plan for log scale and per-repo normalization in overviews.
 - **Distance matrices may be lower-triangular** in storage (asymmetric run); symmetrize
   before rendering heatmaps.
+- **CSV header dates are `YYYY-DD-MM`**, not `YYYY-MM-DD`. The preprocessing script handles
+  this; do not refactor to assume ISO order.
 
 ## Status
 
-Planning phase — implementation has not started. Tech stack and IA are locked.
-See `CLAUDE.md` for agent-facing guidance.
+Phase 1 complete: scaffolding, preprocessing pipeline, Portfolio list, Repo view with
+triple-drift time series. Phase 2 (per-day preprocessing, 3D point cloud, calendar heatmap,
+sparkline grid) is next.

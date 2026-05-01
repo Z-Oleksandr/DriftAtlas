@@ -1,0 +1,58 @@
+.shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.9rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: #fff;
+}
+
+.brand {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--fg);
+}
+
+.brand a {
+  color: inherit;
+}
+
+.crumbs {
+  color: var(--fg-muted);
+  font-size: 0.85rem;
+}
+
+.crumbs a {
+  color: var(--fg-muted);
+}
+
+.crumbs a:hover {
+  color: var(--accent);
+}
+
+.crumb-sep {
+  margin: 0 0.4rem;
+  color: var(--border);
+}
+
+.main {
+  flex: 1;
+  padding: 1.5rem;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.footer {
+  padding: 0.75rem 1.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.75rem;
+  color: var(--fg-muted);
+  text-align: right;
+}
