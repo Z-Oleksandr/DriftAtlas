@@ -5,47 +5,209 @@
 
 .summary {
   color: var(--fg-muted);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
-.list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 0.75rem;
+.controls {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
-.card {
+.metricGroup {
+  display: inline-flex;
   border: 1px solid var(--border);
   border-radius: 6px;
-  padding: 0.9rem 1rem;
+  overflow: hidden;
+}
+
+.metricBtn {
   background: #fff;
-  display: block;
-  color: inherit;
-  transition: border-color 120ms ease;
+  border: none;
+  padding: 0.3rem 0.7rem;
+  cursor: pointer;
+  font-size: 0.75rem;
+  color: var(--fg-muted);
+  border-right: 1px solid var(--border);
+  text-transform: lowercase;
 }
 
-.card:hover {
-  border-color: var(--accent);
-  text-decoration: none;
+.metricBtn:last-child {
+  border-right: none;
+}
+.metricBtn:hover {
+  background: #f5f5f3;
+}
+.metricBtnActive {
+  background: var(--accent);
+  color: #fff;
+}
+.metricBtnActive:hover {
+  background: var(--accent);
 }
 
-.name {
-  font-weight: 600;
-  margin-bottom: 0.3rem;
-  color: var(--fg);
-}
-
-.meta {
+.sortLabel {
   font-size: 0.8rem;
   color: var(--fg-muted);
+}
+
+.sortSelect {
+  font: inherit;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.2rem 0.4rem;
+  background: #fff;
+}
+
+.matrixWrap {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fff;
+  overflow: auto;
+  max-width: 100%;
+}
+
+.matrix {
+  display: grid;
+  grid-template-columns: 160px 130px 1fr 64px;
+  align-items: center;
+  font-size: 0.78rem;
+  min-width: 720px;
+}
+
+.headerRow {
+  display: contents;
+  font-weight: 600;
+  color: var(--fg-muted);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.headerCell {
+  padding: 0.5rem 0.6rem;
+  background: #fafaf8;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.headerCellRight {
+  text-align: right;
+}
+.headerCellTimeline {
+  padding: 0;
+}
+
+.timelineHeader {
   display: flex;
   justify-content: space-between;
+  padding: 0.5rem 0.5rem 0.4rem;
+  background: #fafaf8;
+  border-bottom: 1px solid var(--border);
+  color: var(--fg-muted);
+  font-size: 0.65rem;
+  font-weight: normal;
+  text-transform: none;
+  letter-spacing: 0;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.row {
+  display: contents;
+}
+
+.rowCell {
+  padding: 0.4rem 0.6rem;
+  border-bottom: 1px solid var(--border);
+  background: #fff;
+}
+
+.rowCellLast {
+  border-bottom: none;
+}
+
+.row:hover .rowCell {
+  background: #fafaf8;
+}
+
+.repoLink {
+  color: var(--fg);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.repoLink:hover {
+  color: var(--accent);
+}
+
+.cellsTrack {
+  display: flex;
+  align-items: stretch;
+  height: 28px;
+  padding: 0 0.5rem;
+}
+
+.cell {
+  flex: 1;
+  min-width: 4px;
+  margin-right: 1px;
+  cursor: pointer;
+  transition: outline 80ms ease;
+  outline: 1px solid transparent;
+}
+
+.cell:hover {
+  outline: 1px solid var(--accent);
+  outline-offset: -1px;
+}
+
+.cellNull {
+  background: #f0f0ec !important;
+  cursor: default;
+}
+
+.cellNull:hover {
+  outline: 1px solid transparent;
+}
+
+.peakValue {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: var(--fg-muted);
+  padding-right: 0.6rem;
+}
+
+.tooltip {
+  position: fixed;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.97);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.72rem;
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
 .empty {
   color: var(--fg-muted);
   font-style: italic;
+}
+
+.error {
+  color: #b91c1c;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
 }

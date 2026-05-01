@@ -24,21 +24,39 @@
 }
 
 .crumbs {
-  color: var(--fg-muted);
+  display: flex;
+  align-items: center;
   font-size: 0.85rem;
+  position: relative;
+  z-index: 1;
 }
 
-.crumbs a {
-  color: var(--fg-muted);
-}
-
-.crumbs a:hover {
+.crumbLink {
   color: var(--accent);
+  text-decoration: none;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition:
+    background 100ms ease,
+    color 100ms ease;
+}
+
+.crumbLink:hover {
+  background: rgba(42, 77, 143, 0.08);
+  text-decoration: underline;
+}
+
+.crumbCurrent {
+  color: var(--fg);
+  font-weight: 600;
+  padding: 0.15rem 0.45rem;
 }
 
 .crumb-sep {
-  margin: 0 0.4rem;
+  margin: 0 0.1rem;
   color: var(--border);
+  font-weight: 300;
 }
 
 .main {

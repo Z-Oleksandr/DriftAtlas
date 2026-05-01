@@ -37,6 +37,6 @@ venv/
 # Generated data artifacts (produced by preprocessing)
 public/data/
 
-# Claude
 CLAUDE.md
 .claude/
+code_rules.md

@@ -1,0 +1,85 @@
+.controls {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--fg-muted);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.controls label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  cursor: pointer;
+}
+
+.controls select {
+  font: inherit;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.15rem 0.3rem;
+  background: #fff;
+}
+
+.svgWrap {
+  overflow: auto;
+  max-width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #fff;
+}
+
+.svg {
+  display: block;
+  font-size: 9px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.label {
+  fill: var(--fg-muted);
+  cursor: pointer;
+}
+
+.label:hover {
+  fill: var(--accent);
+}
+
+.labelSelected {
+  fill: var(--accent);
+  font-weight: 600;
+}
+
+.cell {
+  shape-rendering: crispEdges;
+}
+
+.cellSelected {
+  stroke: #f59e0b;
+  stroke-width: 1.5;
+}
+
+.legend {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  font-size: 0.7rem;
+  color: var(--fg-muted);
+}
+
+.legendBar {
+  display: inline-block;
+  width: 100px;
+  height: 8px;
+  background: linear-gradient(to right, #fafaf8, #440154 8%, #21908c 50%, #fde725);
+  border: 1px solid var(--border);
+}
+
+.empty {
+  padding: 1rem;
+  font-style: italic;
+  color: var(--fg-muted);
+  text-align: center;
+}

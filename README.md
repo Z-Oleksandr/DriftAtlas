@@ -32,7 +32,7 @@ pip install -r preprocessing/requirements.txt
 deactivate
 
 # 4. generate the JSON artifacts in public/data/
-python3 preprocessing/build_timeseries.py
+npm run preprocess
 
 # 5. run the dev server
 npm run dev
@@ -40,24 +40,47 @@ npm run dev
 
 Rerun step 4 whenever the source analysis changes; `public/data/` is gitignored.
 
+## Scripts
+
+- `npm run dev` — Vite dev server
+- `npm run build` — type check + production bundle
+- `npm run lint` — ESLint
+- `npm run test` — Vitest (selectors, parsers)
+- `npm run preprocess` — runs both `build_days.py` and `build_timeseries.py`
+- `npx prettier --check 'src/**/*.{ts,tsx,css}'` — formatting check (`--write` to fix)
+
 ## Project structure
 
 ```
 dashboard/
-├── preprocessing/             # Python; reads $DRIFT_REPO_ANALYSIS_PATH
-│   ├── build_timeseries.py    # per-repo CSVs → public/data/*.json
+├── preprocessing/             # Python pipeline (reads $DRIFT_REPO_ANALYSIS_PATH)
+│   ├── build_timeseries.py    # per-repo CSVs → timeseries.json + portfolio.json + index.json
+│   ├── build_days.py          # per-day reports → days/<date>.json (sparse, clustered)
+│   ├── build_releases.py      # GitHub release dumps → release events
 │   └── requirements.txt
 ├── public/
 │   └── data/                  # generated artifacts (gitignored)
 │       ├── index.json
-│       └── repos/<repo>/timeseries.json
+│       ├── portfolio.json
+│       └── repos/<repo>/{timeseries.json, days/<YYYY-MM-DD>.json}
 ├── src/
-│   ├── components/            # Layout, charts/
-│   ├── routes/                # Portfolio, Repo, (Day in Phase 2)
-│   ├── data/                  # types + fetch wrappers
-│   ├── App.tsx                # router
+│   ├── components/
+│   │   ├── charts/            # D3-driven 2D charts (time series, matrix, ranking, sparkline)
+│   │   ├── three/             # react-three-fiber components (PointCloud3D)
+│   │   ├── ErrorBoundary.tsx
+│   │   └── Layout.tsx
+│   ├── routes/                # Portfolio, Repo, Day (lazy-loaded)
+│   ├── data/
+│   │   ├── schema/            # zod schemas, mirrors public/data/ shapes
+│   │   ├── loaders/           # fetch + parse + cache
+│   │   └── selectors/         # densify, MAD lookup, branch summaries
+│   ├── hooks/                 # useRepoIndex, usePortfolio, useDayReport, useDayView
+│   ├── state/                 # DayViewProvider (selection + URL metric state)
+│   ├── lib/log.ts             # console wrapper with layer prefixes
+│   ├── App.tsx                # router with lazy Day route
 │   └── main.tsx
-└── ...
+├── code_rules.md              # engineering rules (must read before contributing)
+└── package.json
 ```
 
 ## Data sources
@@ -98,36 +121,33 @@ Three levels, navigable top-down:
 3. **Day view** — interactive 3D MDS point cloud + reordered conflict heatmap +
    branch ranking table, all linked (hovering one highlights the others).
 
-Phase 1 ships the Portfolio list and the Repo view's drift time series. Day view, calendar
-heatmap, sparkline grid, 3D point cloud, and conflict-matrix heatmap come in Phase 2.
-
-## Planned visualizations
+## Visualizations
 
 **Distance-based**
-- 3D MDS scatter (orbit/zoom, anchor `main`, color by MAD contribution)
-- Outlier rings at 1×/2× MAD around the centroid (geometric reading of the drift number)
-- 2D projections as static fallback / for thesis figures
-- Branch ghost-trails when scrubbing the date slider
-- Force-directed graph from the raw matrix as an alternative to MDS
+- 3D MDS scatter — *Phase 2 ✓* (orbit/zoom, anchor `main` at origin, Viridis color by spread, outlier rings at 1×/2× drift, origin pile-up clustered)
+- 2D projections / thesis figure export — *Phase 3*
+- Branch ghost-trails when scrubbing the date slider — *Phase 3*
+- Force-directed graph as MDS alternative — *Phase 3*
 
 **Time series**
-- Triple-drift line chart (log scale toggle, normalization toggle) — *Phase 1 ✓*
-- Drift × activity overlay (commits as bars, releases as event lines)
-- Calendar heatmap (GitHub-contributions style) across all 21 repos
-- Sparkline grid as the home-page overview
-- Branch-population streamgraph (`total` / `analyzed` / `final`)
+- Triple-drift line chart with log/linear toggle — *Phase 1 ✓ · Phase 2 enriched*
+- Drift × activity overlay (commit bars + release event lines) — *Phase 2 ✓*
+- Calendar heatmap (per-repo-normalized) on the Portfolio — *Phase 2 ✓*
+- Sparkline cards on the Portfolio — *Phase 2 ✓*
+- Branch-population streamgraph (`total` / `analyzed` / `final`) — *Phase 3*
 
 **Tables / matrices**
-- Interactive conflict heatmap with hierarchical reordering (click cell → highlight in 3D)
-- Per-day branch ranking (conflict mass, # partners, distance to `main`)
-- Branch leaderboard across the period (chronic offenders, longest-lived, biggest spike)
-- Two-day matrix diff
+- Conflict matrix heatmap with hierarchical reordering and log color scale — *Phase 2 ✓*
+- Per-day branch ranking (conflict mass, # partners, distance to `main`, spread) — *Phase 2 ✓*
+- Branch leaderboard across the period — *Phase 3*
+- Two-day matrix diff — *Phase 3*
 
 **Cross-cutting**
-- Activity-vs-drift scatter (one dot per repo-day) — the thesis-question-shaped chart
-- Repo comparison panel (2–3 repos time-aligned, normalized)
-- Anomaly panel (top-N days where drift > 2σ above the repo's own baseline)
-- MAD decomposition stacked bar (which branches drive today's drift)
+- Linked highlighting across 3D scatter / matrix / table — *Phase 2 ✓*
+- Activity-vs-drift scatter (the thesis-question chart) — *Phase 3*
+- Repo comparison panel — *Phase 3*
+- Anomaly panel (drift > 2σ above per-repo baseline) — *Phase 3*
+- MAD decomposition stacked bar — *Phase 3*
 
 ## Tech stack
 
@@ -138,15 +158,19 @@ heatmap, sparkline grid, 3D point cloud, and conflict-matrix heatmap come in Pha
 
 ## Build pipeline
 
-A one-shot preprocessing step (Python) reads the raw analysis outputs once and writes
-browser-friendly artifacts:
+A two-script preprocessing step (Python) reads the raw analysis outputs once and writes
+browser-friendly artifacts to `public/data/`:
 
-- one slim per-repo time-series JSON (already shipped in Phase 1);
-- one per-(repo, day) JSON with point cloud + matrix-as-edge-list (sparse) + branch list
-  (Phase 2).
+- `build_timeseries.py` — per-repo time series, the master `index.json`, and
+  `portfolio.json` for the calendar heatmap.
+- `build_days.py` — one slim JSON per (repo, day) with point cloud, sparse edge-list
+  matrices, hierarchical-cluster ordering, and per-branch MAD contribution.
 
 Storing the matrices as edge lists rather than dense arrays cuts payload roughly 10×
-because the matrices are mostly zero.
+because the matrices are mostly zero. Per-day clustering and MAD computation are
+precomputed in Python (scipy) so the browser doesn't redo them on every render.
+
+`npm run preprocess` runs both scripts in sequence.
 
 ## Data caveats worth knowing up front
 
@@ -164,6 +188,13 @@ because the matrices are mostly zero.
 
 ## Status
 
-Phase 1 complete: scaffolding, preprocessing pipeline, Portfolio list, Repo view with
-triple-drift time series. Phase 2 (per-day preprocessing, 3D point cloud, calendar heatmap,
-sparkline grid) is next.
+**Phase 1 complete** — scaffolding, preprocessing pipeline, Portfolio list, Repo view
+with triple-drift time series.
+
+**Phase 2 complete** — per-day preprocessing (1,470 reports), Day view with 3D MDS
+point cloud · reordered conflict-matrix heatmap · branch ranking table, all linked by
+shared selection state. Portfolio upgraded to a calendar heatmap + sparkline grid with
+metric and sort controls. Repo view enriched with commit bars, release event lines, and
+log/linear y-axis toggle. Click-through from any chart drills into the relevant Day view.
+
+Conventions and rules: see `code_rules.md`. Agent guidance: see `CLAUDE.md`.

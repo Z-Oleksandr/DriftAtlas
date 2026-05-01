@@ -8,7 +8,10 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "preprocess": "python3 preprocessing/build_timeseries.py"
+    "preprocess:check": "test -f preprocessing/.venv/bin/python || (echo 'Run: cd preprocessing && python -m venv .venv && .venv/bin/pip install -r preprocessing/requirements.txt' && exit 1)",
+    "preprocess": "npm run preprocess:check && preprocessing/.venv/bin/python preprocessing/build_days.py && preprocessing/.venv/bin/python preprocessing/build_timeseries.py",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
@@ -31,8 +34,11 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.5.0",
+    "prettier": "^3.8.3",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.58.2",
-    "vite": "^8.0.10"
+    "vite": "^8.0.10",
+    "vitest": "^4.1.5",
+    "zod": "^4.4.1"
   }
 }

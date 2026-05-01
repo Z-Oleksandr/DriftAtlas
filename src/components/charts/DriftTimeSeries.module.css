@@ -64,14 +64,91 @@
   opacity: 0.55;
 }
 
-.lineDriftGap { stroke: var(--line-drift); }
-.conflictDriftGap { stroke: var(--conflict-drift); }
-.fileDriftGap { stroke: var(--file-drift); }
+.lineDriftGap {
+  stroke: var(--line-drift);
+}
+.conflictDriftGap {
+  stroke: var(--conflict-drift);
+}
+.fileDriftGap {
+  stroke: var(--file-drift);
+}
 
 .guide {
   stroke: var(--fg-muted);
   stroke-dasharray: 3 3;
   pointer-events: none;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--fg-muted);
+  flex-wrap: wrap;
+}
+
+.scaleToggle {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.scaleBtn {
+  background: #fff;
+  border: none;
+  padding: 0.25rem 0.55rem;
+  cursor: pointer;
+  font-size: 0.7rem;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-right: 1px solid var(--border);
+}
+
+.scaleBtn:last-child {
+  border-right: none;
+}
+.scaleBtn:hover {
+  background: #f5f5f3;
+}
+.scaleBtnActive {
+  background: var(--accent);
+  color: #fff;
+}
+.scaleBtnActive:hover {
+  background: var(--accent);
+}
+
+.clickHint {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.cursorClickable rect:last-child {
+  cursor: pointer;
+}
+
+.commitBar {
+  fill: #94a3b8;
+  opacity: 0.7;
+}
+
+.release line {
+  stroke: #059669;
+  stroke-dasharray: 2 4;
+  stroke-width: 1;
+  opacity: 0.55;
+  pointer-events: stroke;
+}
+
+.releaseSwatch {
+  background: transparent;
+  height: 0;
+  border-top: 2px dashed #059669;
 }
 
 .legend {
@@ -97,9 +174,15 @@
   background: currentColor;
 }
 
-.swatch.lineDrift { background: var(--line-drift); }
-.swatch.conflictDrift { background: var(--conflict-drift); }
-.swatch.fileDrift { background: var(--file-drift); }
+.swatch.lineDrift {
+  background: var(--line-drift);
+}
+.swatch.conflictDrift {
+  background: var(--conflict-drift);
+}
+.swatch.fileDrift {
+  background: var(--file-drift);
+}
 
 .gapSwatch {
   background: transparent;
@@ -136,6 +219,21 @@
   color: var(--fg-muted);
 }
 
-.tooltip .lineDrift { color: var(--line-drift); background: none; width: auto; height: auto; }
-.tooltip .conflictDrift { color: var(--conflict-drift); background: none; width: auto; height: auto; }
-.tooltip .fileDrift { color: var(--file-drift); background: none; width: auto; height: auto; }
+.tooltip .lineDrift {
+  color: var(--line-drift);
+  background: none;
+  width: auto;
+  height: auto;
+}
+.tooltip .conflictDrift {
+  color: var(--conflict-drift);
+  background: none;
+  width: auto;
+  height: auto;
+}
+.tooltip .fileDrift {
+  color: var(--file-drift);
+  background: none;
+  width: auto;
+  height: auto;
+}
