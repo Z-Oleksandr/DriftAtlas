@@ -8,8 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "preprocess:check": "test -f preprocessing/.venv/bin/python || (echo 'Run: cd preprocessing && python -m venv .venv && .venv/bin/pip install -r preprocessing/requirements.txt' && exit 1)",
-    "preprocess": "npm run preprocess:check && preprocessing/.venv/bin/python preprocessing/build_days.py && preprocessing/.venv/bin/python preprocessing/build_timeseries.py",
+    "preprocess:check": "node helpers/check_venv.js",
+    "preprocess": "npm run preprocess:check && node helpers/run_python.js preprocessing/build_days.py && node helpers/run_python.js preprocessing/build_timeseries.py",
     "test": "vitest run",
     "test:watch": "vitest"
   },
