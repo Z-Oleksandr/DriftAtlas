@@ -61,6 +61,7 @@ def symmetrize(matrix: np.ndarray) -> np.ndarray:
 
 
 def edges_from_matrix(branches: list[str], matrix: np.ndarray) -> list[dict]:
+    """Size optimization. Walk the upper triangle and emit only non-zero pairs. Sort for determinism."""
     n = len(branches)
     if matrix.shape != (n, n):
         raise ValueError(f"matrix shape {matrix.shape} mismatches branch count {n}")
@@ -75,6 +76,7 @@ def edges_from_matrix(branches: list[str], matrix: np.ndarray) -> list[dict]:
 
 
 def hierarchical_order(matrix: np.ndarray) -> list[int]:
+    """Reorder branches by similatiry."""
     n = matrix.shape[0]
     if n < 2:
         return list(range(n))
