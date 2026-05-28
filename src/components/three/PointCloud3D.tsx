@@ -160,17 +160,16 @@ export default function PointCloud3D({ report }: Props) {
 
         {prepared.mainIndex >= 0 && (
           <group position={[0, 0, 0]}>
-            <mesh>
+            <mesh
+              onPointerOver={() => setSelectedBranch(MAIN_BRANCH)}
+              onPointerOut={() => setSelectedBranch(null)}
+            >
               <sphereGeometry args={[Math.max(cam * 0.025, 0.4), 24, 24]} />
               <meshStandardMaterial color="#2a4d8f" />
             </mesh>
-            <Html
-              className={`${styles.label} ${styles.labelMain}`}
-              center
-              distanceFactor={cam * 1.4}
-            >
-              main
-            </Html>
+            {/* "main" label is now hover/selection-driven (rendered by the
+                shared selection highlight below) so the permanent label
+                doesn't occlude the dense cluster around the anchor. */}
           </group>
         )}
 
@@ -180,7 +179,7 @@ export default function PointCloud3D({ report }: Props) {
               <octahedronGeometry args={[Math.max(cam * 0.022, 0.4), 0]} />
               <meshStandardMaterial color="#94a3b8" />
             </mesh>
-            <Html className={styles.label} center distanceFactor={cam * 1.4}>
+            <Html className={styles.label} center>
               {prepared.originIndices.size} no-conflict branches
             </Html>
           </group>
@@ -218,29 +217,33 @@ export default function PointCloud3D({ report }: Props) {
 
         {hoverIdx !== null && prepared.positions[hoverIdx] && (
           <group position={prepared.positions[hoverIdx]!}>
-            <Html
-              className={`${styles.label} ${styles.labelHover}`}
-              center
-              distanceFactor={cam * 1.4}
-            >
+            <Html className={`${styles.label} ${styles.labelHover}`} center>
               {branches[hoverIdx]}
             </Html>
           </group>
         )}
 
         {selectedBranch &&
-          selectedBranch !== MAIN_BRANCH &&
           (() => {
-            const idx = branches.indexOf(selectedBranch);
-            if (idx < 0 || idx === hoverIdx) return null;
-            const pos = prepared.positions[idx];
+            const isMain = selectedBranch === MAIN_BRANCH;
+            const idx = isMain ? prepared.mainIndex : branches.indexOf(selectedBranch);
+            if (idx < 0) return null;
+            const pos = isMain ? ([0, 0, 0] as [number, number, number]) : prepared.positions[idx];
             if (!pos) return null;
+            const showHighlight = !isMain && idx !== hoverIdx;
             return (
               <group position={pos}>
-                <mesh>
-                  <sphereGeometry args={[Math.max(cam * 0.024, 0.45), 16, 16]} />
-                  <meshBasicMaterial color="#f59e0b" wireframe />
-                </mesh>
+                {showHighlight && (
+                  <mesh>
+                    <sphereGeometry args={[Math.max(cam * 0.024, 0.45), 16, 16]} />
+                    <meshBasicMaterial color="#f59e0b" wireframe />
+                  </mesh>
+                )}
+                {isMain && (
+                  <Html className={`${styles.label} ${styles.labelMain}`} center>
+                    main
+                  </Html>
+                )}
               </group>
             );
           })()}

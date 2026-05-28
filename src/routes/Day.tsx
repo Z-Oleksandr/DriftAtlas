@@ -2,6 +2,8 @@ import { useMemo } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import BranchRanking from '../components/charts/BranchRanking';
 import ConflictMatrix from '../components/charts/ConflictMatrix';
+import ForceGraph from '../components/three/ForceGraph';
+import PanelModeToggle from '../components/three/PanelModeToggle';
 import PointCloud3D from '../components/three/PointCloud3D';
 import { ALL_METRICS } from '../data/types';
 import type { DriftMetric } from '../data/types';
@@ -81,7 +83,7 @@ function DayNav({ repo, date, available }: DayNavProps) {
 
 function DayInner() {
   const { name, date } = useParams<{ name: string; date: string }>();
-  const { metric } = useDayView();
+  const { metric, panelMode } = useDayView();
   const indexResult = useRepoIndex();
   const dayResult = useDayReport(name, date);
 
@@ -123,6 +125,7 @@ function DayInner() {
 
       <div className={styles.toolbar}>
         <MetricToggle />
+        <PanelModeToggle />
         {name && <DayNav repo={name} date={day.date} available={availableDays} />}
       </div>
 
@@ -146,8 +149,18 @@ function DayInner() {
       <div className={styles.layout}>
         <div className={styles.column}>
           <div className={styles.section}>
-            <div className={styles.sectionTitle}>3D MDS scatter</div>
-            <PointCloud3D report={day} />
+            <div className={styles.sectionTitle}>
+              {panelMode === 'mds'
+                ? '3D MDS scatter'
+                : panelMode === 'fdg3d'
+                  ? 'Force graph (3D)'
+                  : 'Force graph (2D)'}
+            </div>
+            {panelMode === 'mds' ? (
+              <PointCloud3D report={day} />
+            ) : (
+              <ForceGraph report={day} dims={panelMode === 'fdg3d' ? 3 : 2} />
+            )}
           </div>
           <div className={styles.section}>
             <div className={styles.sectionTitle}>Branch ranking</div>
@@ -165,10 +178,17 @@ function DayInner() {
   );
 }
 
-export default function Day() {
+function DayWithKey() {
+  // Remount the provider when the date changes so transient state (selection,
+  // FDG pins) resets per the locked P3 decision "drag-pin resets on day change".
+  const { date } = useParams<{ date: string }>();
   return (
-    <DayViewProvider>
+    <DayViewProvider key={date ?? ''}>
       <DayInner />
     </DayViewProvider>
   );
+}
+
+export default function Day() {
+  return <DayWithKey />;
 }

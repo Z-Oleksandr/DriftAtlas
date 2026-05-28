@@ -10,3 +10,7 @@ export type AsyncResult<T> =
   | { status: 'loading' }
   | { status: 'error'; message: string }
   | { status: 'success'; data: T };
+
+/** Which left-column panel is visible on the Day view. URL-synced via `?panel=`. */
+export type PanelMode = 'mds' | 'fdg2d' | 'fdg3d';
+export const ALL_PANEL_MODES: readonly PanelMode[] = ['mds', 'fdg2d', 'fdg3d'];
