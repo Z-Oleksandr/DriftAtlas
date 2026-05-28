@@ -47,6 +47,25 @@ interface DayNavProps {
   available: readonly string[];
 }
 
+function CompareToPrevButton({ repo, date, available }: DayNavProps) {
+  const navigate = useNavigate();
+  const idx = available.indexOf(date);
+  const prev = idx > 0 ? available[idx - 1] : undefined;
+  return (
+    <button
+      type="button"
+      className={styles.compareBtn}
+      disabled={!prev}
+      onClick={() =>
+        prev && navigate(`/repo/${encodeURIComponent(repo)}/diff/${prev}/${date}`)
+      }
+      title={prev ? `Diff ${prev} → ${date}` : 'No earlier analyzed day to compare with'}
+    >
+      compare to previous day
+    </button>
+  );
+}
+
 function DayNav({ repo, date, available }: DayNavProps) {
   const navigate = useNavigate();
   const idx = available.indexOf(date);
@@ -127,6 +146,7 @@ function DayInner() {
         <MetricToggle />
         <PanelModeToggle />
         {name && <DayNav repo={name} date={day.date} available={availableDays} />}
+        {name && <CompareToPrevButton repo={name} date={day.date} available={availableDays} />}
       </div>
 
       <div className={styles.section} style={{ marginBottom: '1.25rem' }}>

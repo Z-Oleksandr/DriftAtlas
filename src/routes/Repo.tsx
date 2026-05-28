@@ -11,20 +11,34 @@ export default function Repo() {
   const tsResult = useRepoTimeseries(name);
   const indexResult = useRepoIndex();
 
-  const analyzedDays = useMemo<ReadonlySet<string>>(() => {
-    if (indexResult.status !== 'success') return new Set();
+  const analyzedDaysArr = useMemo<readonly string[]>(() => {
+    if (indexResult.status !== 'success') return [];
     const repo = indexResult.data.repos.find((r) => r.name === name);
-    return new Set(repo?.analyzedDays ?? []);
+    return repo?.analyzedDays ?? [];
   }, [indexResult, name]);
 
-  const isDayAnalyzed = useCallback((date: string) => analyzedDays.has(date), [analyzedDays]);
+  const analyzedDaysSet = useMemo<ReadonlySet<string>>(
+    () => new Set(analyzedDaysArr),
+    [analyzedDaysArr],
+  );
+
+  const isDayAnalyzed = useCallback(
+    (date: string) => analyzedDaysSet.has(date),
+    [analyzedDaysSet],
+  );
 
   const onDayClick = useCallback(
     (date: string) => {
       if (!name) return;
-      navigate(`/repo/${encodeURIComponent(name)}/${date}`);
+      const idx = analyzedDaysArr.indexOf(date);
+      const prev = idx > 0 ? analyzedDaysArr[idx - 1] : undefined;
+      if (prev) {
+        navigate(`/repo/${encodeURIComponent(name)}/diff/${prev}/${date}`);
+      } else {
+        navigate(`/repo/${encodeURIComponent(name)}/${date}`);
+      }
     },
-    [name, navigate],
+    [name, navigate, analyzedDaysArr],
   );
 
   if (tsResult.status === 'error') {

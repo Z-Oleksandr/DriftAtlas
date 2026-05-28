@@ -8,9 +8,18 @@ interface Crumb {
   to?: string;
 }
 
-function buildCrumbs(name: string | undefined, date: string | undefined): Crumb[] {
-  const onPortfolio = !name && !date;
-  const onRepo = !!name && !date;
+interface DiffCrumb {
+  from: string;
+  to: string;
+}
+
+function buildCrumbs(
+  name: string | undefined,
+  date: string | undefined,
+  diff: DiffCrumb | undefined,
+): Crumb[] {
+  const onPortfolio = !name && !date && !diff;
+  const onRepo = !!name && !date && !diff;
 
   const crumbs: Crumb[] = [];
   crumbs.push(onPortfolio ? { label: 'Portfolio' } : { label: 'Portfolio', to: '/' });
@@ -19,7 +28,9 @@ function buildCrumbs(name: string | undefined, date: string | undefined): Crumb[
       onRepo ? { label: name } : { label: name, to: `/repo/${encodeURIComponent(name)}` },
     );
   }
-  if (date) {
+  if (diff) {
+    crumbs.push({ label: `${diff.from} → ${diff.to}` });
+  } else if (date) {
     crumbs.push({ label: date });
   }
   return crumbs;
@@ -50,11 +61,16 @@ function Breadcrumb() {
   // Breadcrumb lives inside a path-less layout route, that match has no
   // params — descendant params (`:name`, `:date`) never reach this scope.
   // Match against the known patterns directly so we always see the live URL.
+  const diffMatch = useMatch('/repo/:name/diff/:from/:to');
   const dayMatch = useMatch('/repo/:name/:date');
   const repoMatch = useMatch('/repo/:name');
-  const name = dayMatch?.params.name ?? repoMatch?.params.name;
+  const name = diffMatch?.params.name ?? dayMatch?.params.name ?? repoMatch?.params.name;
   const date = dayMatch?.params.date;
-  const crumbs = buildCrumbs(name, date);
+  const diff =
+    diffMatch?.params.from && diffMatch.params.to
+      ? { from: diffMatch.params.from, to: diffMatch.params.to }
+      : undefined;
+  const crumbs = buildCrumbs(name, date, diff);
 
   return (
     <nav className={styles.crumbs} aria-label="breadcrumb">

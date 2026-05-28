@@ -48,12 +48,53 @@
   background: var(--accent);
 }
 
-.dayNav {
+.pairNav {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
   font-size: 0.85rem;
   color: var(--fg-muted);
+}
+
+.pairPicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--fg-muted);
+}
+
+.pairPickerLabel {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
+}
+
+.pairPickerArrow {
+  color: var(--fg-muted);
+  margin: 0 0.1rem;
+}
+
+.daySelect {
+  font: inherit;
+  font-size: 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.2rem 0.4rem;
+  background: #fff;
+  cursor: pointer;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+
+.daySelect:hover {
+  border-color: var(--accent);
+}
+
+.daySelect:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
 }
 
 .dayNavBtn {
@@ -75,26 +116,13 @@
   cursor: not-allowed;
 }
 
-.compareBtn {
-  background: #fff;
-  border: 1px solid var(--accent);
-  border-radius: 4px;
-  padding: 0.25rem 0.7rem;
-  cursor: pointer;
-  font-size: 0.8rem;
+.crumbLink {
+  font-size: 0.85rem;
   color: var(--accent);
+  text-decoration: none;
 }
-
-.compareBtn:hover:not(:disabled) {
-  background: var(--accent);
-  color: #fff;
-}
-
-.compareBtn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  border-color: var(--border);
-  color: var(--fg-muted);
+.crumbLink:hover {
+  text-decoration: underline;
 }
 
 .layout {
@@ -130,6 +158,7 @@
   display: flex;
   gap: 1.25rem;
   font-size: 0.8rem;
+  flex-wrap: wrap;
 }
 
 .driftStrip strong {
@@ -148,6 +177,51 @@
 .loading {
   color: var(--fg-muted);
   font-style: italic;
+}
+
+.pairTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.pairTable th,
+.pairTable td {
+  padding: 0.3rem 0.55rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.pairTable th {
+  font-weight: 600;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.7rem;
+  background: #fafaf8;
+}
+
+.numeric {
+  text-align: right;
+}
+
+.branchName {
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pairRowSelected {
+  background: #fef3c7;
+}
+
+.empty {
+  color: var(--fg-muted);
+  font-style: italic;
+  margin: 0.5rem 0;
+  font-size: 0.85rem;
 }
 
 @media (max-width: 960px) {

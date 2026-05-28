@@ -1,0 +1,123 @@
+.wrap {
+  max-height: 420px;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #fff;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.table th,
+.table td {
+  padding: 0.35rem 0.55rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.table th {
+  position: sticky;
+  top: 0;
+  background: #fafaf8;
+  font-weight: 600;
+  color: var(--fg-muted);
+  cursor: pointer;
+  user-select: none;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.7rem;
+}
+
+.table th:hover {
+  color: var(--accent);
+}
+
+.unsortable {
+  cursor: default;
+}
+
+.unsortable:hover {
+  color: var(--fg-muted);
+}
+
+.numeric {
+  text-align: right;
+}
+
+.tableRow {
+  cursor: default;
+}
+
+.tableRow:hover {
+  background: #f5f5f3;
+}
+
+.tableRowSelected {
+  background: #fef3c7;
+}
+.tableRowSelected:hover {
+  background: #fde68a;
+}
+
+.tableRowMain {
+  background: #f0f6ff;
+}
+.tableRowMain:hover {
+  background: #e0eeff;
+}
+
+.branchName {
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dim {
+  color: var(--fg-muted);
+}
+
+.sortArrow {
+  font-size: 0.75rem;
+  margin-left: 0.2rem;
+}
+
+.chip {
+  display: inline-block;
+  font-size: 0.65rem;
+  padding: 1px 6px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+.chipAppeared {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.chipDisappeared {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.chipPersistedPos {
+  background: #fed7aa;
+  color: #9a3412;
+}
+
+.chipPersistedNeg {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.chipStable {
+  background: #e7e7e2;
+  color: var(--fg-muted);
+}

@@ -1,0 +1,28 @@
+.card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  padding: 0.85rem 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.headline {
+  font-size: 1rem;
+  margin: 0;
+  color: var(--fg);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.bullets {
+  margin: 0.5rem 0 0;
+  padding-left: 1.2rem;
+  font-size: 0.85rem;
+  color: var(--fg-muted);
+}
+
+.bullets li {
+  margin: 0.15rem 0;
+  font-variant-numeric: tabular-nums;
+}
