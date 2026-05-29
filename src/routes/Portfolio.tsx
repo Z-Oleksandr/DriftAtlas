@@ -217,6 +217,16 @@ export default function Portfolio() {
         </div>
       </div>
 
+      <div className={styles.legend} aria-label="Color legend">
+        <span className={styles.legendLabel}>lower {METRIC_LABEL[metric]}</span>
+        <span className={styles.legendBar} />
+        <span className={styles.legendLabel}>higher</span>
+        <span className={styles.legendNote}>(per repo)</span>
+        <span className={styles.legendSep} />
+        <span className={styles.legendNull} />
+        <span className={styles.legendLabel}>no data</span>
+      </div>
+
       {tooltip && (
         <div className={styles.tooltip} style={{ left: tooltip.x + 12, top: tooltip.y + 12 }}>
           <strong>{tooltip.repo}</strong> · {tooltip.date}

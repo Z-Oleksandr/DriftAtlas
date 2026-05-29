@@ -186,6 +186,50 @@
   padding-right: 0.6rem;
 }
 
+.legend {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  font-size: 0.7rem;
+  color: var(--fg-muted);
+  flex-wrap: wrap;
+}
+
+.legendLabel {
+  white-space: nowrap;
+}
+
+.legendNote {
+  font-style: italic;
+  opacity: 0.8;
+}
+
+.legendBar {
+  display: inline-block;
+  width: 100px;
+  height: 8px;
+  /* Approximates d3 interpolateViridis (low → high); cells are per-repo-normalized. */
+  background: linear-gradient(to right, #440154, #21908c 50%, #fde725);
+  border: 1px solid var(--border);
+}
+
+.legendSep {
+  display: inline-block;
+  width: 1px;
+  height: 14px;
+  background: var(--border);
+  margin: 0 0.25rem;
+}
+
+.legendNull {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  background: #f0f0ec;
+  border: 1px solid var(--border);
+}
+
 .tooltip {
   position: fixed;
   z-index: 10;
